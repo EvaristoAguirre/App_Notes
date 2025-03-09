@@ -4,11 +4,16 @@ import { INote } from "../interfaces/note.interface";
 const API_URL = import.meta.env.VITE_API_URL;
 
 export const getNotes = async () => {
-  // const token = localStorage.getItem("token");
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note`, {
     method: "GET",
-    // headers: { Authorization: `Bearer ${token}` },
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
@@ -25,9 +30,16 @@ export const createNote = async (
   description: string,
   categories: ICategory[]
 ) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note`, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ title, description, categories }),
   });
   if (!response.ok) {
@@ -39,9 +51,16 @@ export const createNote = async (
 };
 
 export const archiveNote = async (id: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note/${id}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ isArchived: true }),
   });
 
@@ -59,9 +78,16 @@ export const editNote = async (
   isArchived: boolean,
   categories: ICategory[]
 ) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note/${id}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ id, title, description, isArchived, categories }),
   });
 
@@ -76,9 +102,16 @@ export const editNote = async (
 };
 
 export const deleteNote = async (id: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note/${id}`, {
     method: "DELETE",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
 
   if (!response.ok) {
@@ -89,9 +122,16 @@ export const deleteNote = async (id: string) => {
 };
 
 export const getArchivedNotes = async () => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note/archived`, {
     method: "GET",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
   });
   if (!response.ok) {
     throw new Error(
@@ -102,9 +142,16 @@ export const getArchivedNotes = async () => {
 };
 
 export const unArchivedNote = async (id: string) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const response = await fetch(`${API_URL}/note/un-archived/${id}`, {
     method: "PATCH",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
     body: JSON.stringify({ id }),
   });
 
@@ -119,13 +166,20 @@ export const unArchivedNote = async (id: string) => {
 };
 
 export const filterNotes = async (categoryIds: string[]) => {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    throw new Error("No se encontró el token de autenticación.");
+  }
   const query = categoryIds.join(",");
 
   const response = await fetch(
     `${API_URL}/note/by-categories?categories=${encodeURIComponent(query)}`,
     {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
     }
   );
   if (!response.ok) {
