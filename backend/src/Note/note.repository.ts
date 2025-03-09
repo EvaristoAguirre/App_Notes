@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import {
   BadRequestException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -21,27 +22,35 @@ export class NoteRepository {
   ) {}
 
   async createNote(noteToCreate: CreateNoteDto, userId: string): Promise<Note> {
+    console.log('noteToCreate:', noteToCreate);
+    console.log('userId:', userId);
+
     try {
       const { categories, ...noteData } = noteToCreate;
-
+      console.log(categories, 'categories');
       const note = this.noteRepository.create({
         ...noteData,
         user: { id: userId },
       });
 
+      // Si hay categorías, asignarlas a la nota
       if (categories && categories.length > 0) {
+        // Extraer solo los IDs de las categorías
         const categoryIdsArray = categories.map((category) => category.id);
 
+        // Buscar las categorías en la base de datos usando los IDs
         const categoriesFromDb = await this.categoryRepository.findBy({
           id: In(categoryIdsArray),
         });
 
+        // Verificar que todas las categorías existan
         if (categoriesFromDb.length !== categoryIdsArray.length) {
           throw new BadRequestException(
             'Some category IDs provided are invalid.',
           );
         }
 
+        // Asignar las categorías a la nota
         note.categories = categoriesFromDb;
       }
 
@@ -54,9 +63,10 @@ export class NoteRepository {
 
       return noteWithCategories;
     } catch (error) {
-      console.error('Error al crear la nota:', error.message);
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Failed to create the note',
+        'Failed to create category',
         error.message,
       );
     }
@@ -133,8 +143,10 @@ export class NoteRepository {
       await this.noteRepository.delete(id);
       return 'Note successfully deleted';
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Error deleting the note',
+        'Failed to create category',
         error.message,
       );
     }
@@ -154,8 +166,10 @@ export class NoteRepository {
         relations: ['categories'],
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Faied to retrieve all notes',
+        'Failed to create category',
         error.message,
       );
     }
@@ -172,8 +186,10 @@ export class NoteRepository {
       }
       return noteFinded;
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Error fetching the note',
+        'Failed to create category',
         error.message,
       );
     }
@@ -191,8 +207,10 @@ export class NoteRepository {
         })
         .getMany();
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Failed to retrieve notes by categories',
+        'Failed to create category',
         error.message,
       );
     }
@@ -205,8 +223,10 @@ export class NoteRepository {
         relations: ['categories'],
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Faied to retrieve all archived notes',
+        'Failed to create category',
         error.message,
       );
     }
@@ -224,8 +244,10 @@ export class NoteRepository {
       noteFinded.isArchived = false;
       return await this.noteRepository.save(noteFinded);
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Error fetching the note',
+        'Failed to create category',
         error.message,
       );
     }

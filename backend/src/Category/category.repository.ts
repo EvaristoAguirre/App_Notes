@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  HttpException,
   Injectable,
   InternalServerErrorException,
   NotFoundException,
@@ -27,6 +28,8 @@ export class CategoryRepository {
       }
       return await this.categoryRepository.save(categoryToCreate);
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
         'Failed to create category',
         error.message,
@@ -48,8 +51,10 @@ export class CategoryRepository {
       Object.assign(categoryFinded, categoryToUpdate);
       return await this.categoryRepository.save(categoryFinded);
     } catch (error) {
-      throw new NotFoundException(
-        `Category with ID ${id} not found`,
+      if (error instanceof HttpException) throw error;
+
+      throw new InternalServerErrorException(
+        'Failed to create category',
         error.message,
       );
     }
@@ -66,8 +71,10 @@ export class CategoryRepository {
       await this.categoryRepository.delete(id);
       return 'Category successfully deleted';
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Failed to deactivate category',
+        'Failed to create category',
         error.message,
       );
     }
@@ -79,8 +86,10 @@ export class CategoryRepository {
         order: { name: 'ASC' },
       });
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Failed to retrieve all categories',
+        'Failed to create category',
         error.message,
       );
     }
@@ -97,8 +106,10 @@ export class CategoryRepository {
       }
       return categoryFinded;
     } catch (error) {
+      if (error instanceof HttpException) throw error;
+
       throw new InternalServerErrorException(
-        'Error fetching the category',
+        'Failed to create category',
         error.message,
       );
     }

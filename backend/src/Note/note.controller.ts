@@ -17,13 +17,14 @@ import { Note } from 'src/Entities/note.entity';
 import { CategoriesToSearchDto } from 'src/DTOs/categoriesToSearch.dto';
 import { JwtAuthGuard } from 'src/Guards/jwt-auth.guard';
 import { User } from 'src/Decorators/user.decorator';
+import { request } from 'express';
 
 @Controller('note')
 export class NoteController {
   constructor(private readonly noteService: NoteService) {}
 
-  @UseGuards(JwtAuthGuard)
   @Post()
+  @UseGuards(JwtAuthGuard)
   createNote(
     @Body() createNoteDto: CreateNoteDto,
     @User('userId') userId: string,
@@ -31,8 +32,8 @@ export class NoteController {
     return this.noteService.createNote(createNoteDto, userId);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Patch(':id')
+  @UseGuards(JwtAuthGuard)
   updateNote(
     @Param('id') id: string,
     @Body() updateNoteDto: UpdateNoteDto,
@@ -42,26 +43,29 @@ export class NoteController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   delteNote(@Param('id') id: string): Promise<string> {
     return this.noteService.deleteNote(id);
   }
 
   @Patch('un-archived/:id')
+  @UseGuards(JwtAuthGuard)
   unArchivedNote(@Param('id') id: string): Promise<Note> {
     return this.noteService.unArchivedNote(id);
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get()
+  @UseGuards(JwtAuthGuard)
   getAllNotes(
-    @Query('page') page: number,
-    @Query('limit') limit: number,
+    @Query('page') page: number = 1,
+    @Query('limit') limit: number = 10,
     @User('userId') userId: string,
   ): Promise<Note[]> {
     return this.noteService.getAllNotes(page, limit, userId);
   }
 
   @Get('by-categories')
+  @UseGuards(JwtAuthGuard)
   getNotesByCategories(
     @Query('categories') categories?: string,
   ): Promise<Note[] | null> {
@@ -71,8 +75,8 @@ export class NoteController {
     }
   }
 
-  @UseGuards(JwtAuthGuard)
   @Get('archived')
+  @UseGuards(JwtAuthGuard)
   getArchivedNotes(
     @User('userId') userId: string,
     req: Request,
@@ -81,6 +85,7 @@ export class NoteController {
   }
 
   @Get(':id')
+  @UseGuards(JwtAuthGuard)
   getNoteById(@Param('id') id: string): Promise<Note> {
     return this.noteService.getNoteById(id);
   }
