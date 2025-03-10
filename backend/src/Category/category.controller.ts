@@ -12,14 +12,18 @@ import { CategoryService } from './category.service';
 import { Category } from 'src/Entities/category.entity';
 import { CreateCategoryDto } from 'src/DTOs/create-category';
 import { UpdateCategoryDto } from 'src/DTOs/update-category';
+import { User } from 'src/Decorators/user.decorator';
 
 @Controller('category')
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post()
-  createCategory(@Body() category: CreateCategoryDto): Promise<Category> {
-    return this.categoryService.createCategory(category);
+  createCategory(
+    @Body() category: CreateCategoryDto,
+    @User('userId') userId: string,
+  ): Promise<Category> {
+    return this.categoryService.createCategory(category, userId);
   }
 
   @Patch(':id')
@@ -36,8 +40,8 @@ export class CategoryController {
   }
 
   @Get()
-  getAllCategory(): Promise<Category[]> {
-    return this.categoryService.getAllCategory();
+  getAllCategory(@User('userId') userId: string): Promise<Category[]> {
+    return this.categoryService.getAllCategory(userId);
   }
 
   @Get(':id')

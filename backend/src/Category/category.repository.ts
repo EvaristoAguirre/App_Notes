@@ -16,7 +16,10 @@ export class CategoryRepository {
   @InjectRepository(Category)
   private readonly categoryRepository: Repository<Category>;
 
-  async createCategory(categoryToCreate: CreateCategoryDto): Promise<Category> {
+  async createCategory(
+    categoryToCreate: CreateCategoryDto,
+    userId: string,
+  ): Promise<Category> {
     try {
       const categoryExist = await this.categoryRepository.findOne({
         where: { name: categoryToCreate.name },
@@ -80,9 +83,10 @@ export class CategoryRepository {
     }
   }
 
-  async getAllCategories(): Promise<Category[]> {
+  async getAllCategories(userId: string): Promise<Category[]> {
     try {
       return await this.categoryRepository.find({
+        where: { user: { id: userId } },
         order: { name: 'ASC' },
       });
     } catch (error) {

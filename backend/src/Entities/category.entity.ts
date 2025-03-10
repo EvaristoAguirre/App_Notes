@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  ManyToOne,
+} from 'typeorm';
 import { Note } from './note.entity';
+import { User } from './user.entity';
 
 @Entity({ name: 'categories' })
 export class Category {
@@ -14,4 +21,7 @@ export class Category {
 
   @ManyToMany(() => Note, (note) => note.categories)
   notes: Note[];
+
+  @ManyToOne(() => User, (user) => user.categories)
+  user: User;
 }

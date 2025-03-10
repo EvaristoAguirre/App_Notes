@@ -8,8 +8,14 @@ import { UpdateCategoryDto } from 'src/DTOs/update-category';
 export class CategoryService {
   constructor(private readonly categoryRepository: CategoryRepository) {}
 
-  async createCategory(categoryToCreate: CreateCategoryDto): Promise<Category> {
-    return await this.categoryRepository.createCategory(categoryToCreate);
+  async createCategory(
+    categoryToCreate: CreateCategoryDto,
+    userId: string,
+  ): Promise<Category> {
+    return await this.categoryRepository.createCategory(
+      categoryToCreate,
+      userId,
+    );
   }
 
   async updateCategory(
@@ -23,8 +29,8 @@ export class CategoryService {
     return await this.categoryRepository.deleteCategory(id);
   }
 
-  async getAllCategory(): Promise<Category[]> {
-    return await this.categoryRepository.getAllCategories();
+  async getAllCategory(userId: string): Promise<Category[]> {
+    return await this.categoryRepository.getAllCategories(userId);
   }
 
   async getCategoryById(id: string): Promise<Category> {
